@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/flimzy/diff"
-	"github.com/flimzy/flashback-server2/providers"
 	"github.com/flimzy/flashback-server2/providers/testprovider"
 	"github.com/flimzy/kivik/errors"
 )
@@ -134,7 +133,7 @@ func TestOAuth2(t *testing.T) {
 			status: http.StatusFound,
 		},
 	}
-	providers := map[string]providers.Provider{
+	providers := map[string]Provider{
 		"testprovider": testProvider,
 	}
 	mw := OAuth2(providers, "foo")

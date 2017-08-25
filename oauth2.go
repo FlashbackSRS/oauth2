@@ -2,6 +2,7 @@ package oauth2
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -18,7 +19,6 @@ import (
 	"github.com/monoculum/formam"
 
 	fb "github.com/FlashbackSRS/flashback-model"
-	"github.com/flimzy/flashback-server2/providers"
 )
 
 func reportError(w http.ResponseWriter, err error) {
@@ -37,8 +37,13 @@ func reportError(w http.ResponseWriter, err error) {
 	}
 }
 
+// Provider is a copy of flashback-server2/providers.Provider
+type Provider interface {
+	GetUser(ctx context.Context, token string) (*fb.User, error)
+}
+
 // OAuth2 is middleware for OAuth2 authentication.
-func OAuth2(providers map[string]providers.Provider, secret string) func(http.Handler) http.Handler {
+func OAuth2(providers map[string]Provider, secret string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != http.MethodPost || r.URL.Path != "/_session" {
